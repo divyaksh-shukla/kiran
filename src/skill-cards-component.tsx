@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, ScrollView, ToastAndroid, TouchableOpacity, FlatList } from 'react-native';
-import { BottomNavigation } from 'react-native-paper';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { base_url } from './utils';
 
-import { AchivementResponse } from './interfaces';
 
 export class SkillCardsComponent extends Component {
 
@@ -14,7 +12,8 @@ export class SkillCardsComponent extends Component {
             marginTop: 8
         },
         footerContainer: {
-            paddingHorizontal: 8,
+            alignContent: 'stretch', 
+            backgroundColor: 'white'
         },
         card: {
             flex: 1,
@@ -85,17 +84,30 @@ export class SkillCardsComponent extends Component {
     }
 
     public componentDidMount() {
-        fetch(`${base_url}/achievement/1`, { method: 'GET' })
+        this.fetchData();
+    }
+
+    fetchData() {
+        fetch(`${base_url}/achievement/${this.state.page}/1`, { method: 'GET' })
             .then((data) => data.json())
             .then((data) => {
                 this.setState({
                     skills: data
                 });
+            })
+            .catch((error: any) => {
+                console.log(error)
+                alert(error.message);
             });
     }
 
     private _touchedSkill(skill: any) {
         console.log(skill);
+    }
+
+    private changePage(page: any) {
+        this.setState({page: page.title});
+        this.fetchData();
     }
 
     private _makeSkillList(skill: any, index: number, separators: any) {
@@ -106,10 +118,10 @@ export class SkillCardsComponent extends Component {
                 </View>
                 <View style={this.styles.content}>
                     <View style={this.styles.level}>
-                        <Text>Level 1: Basic</Text>
+                        <Text>{skill.level}</Text>
                     </View>
                     <View style={this.styles.assignment}>
-                        <Text style={{ color: 'green' }}>0/5</Text>
+                        <Text style={{ color: skill.assignmentColor }}>{skill.completedAssignments}/{skill.totalAssignments}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -118,9 +130,9 @@ export class SkillCardsComponent extends Component {
 
     private _makePageSwitchBox(page: any, index: number, separators: any) {
         return (
-            <TouchableOpacity style={{ ...this.styles.card, backgroundColor: page.backgroundColor, marginVertical: 8, flex: 1, alignSelf: 'flex-end' }} onPress={() => this.setState({ page: page.title })}>
+            <TouchableOpacity style={{ backgroundColor: (page.title === this.state.page)?page.backgroundColor:'lightgray', paddingVertical: 16, flex: 1 }} onPress={() => this.changePage(page)}>
                 <View>
-                    <Text style={{ color: page.color, textAlign: "center" }}>{page.title}</Text>
+                    <Text style={{ color: (page.title === this.state.page)?page.color:'black', textAlign: "center" }}>{page.title}</Text>
                 </View>
             </TouchableOpacity>
         )
@@ -134,7 +146,7 @@ export class SkillCardsComponent extends Component {
 
         page.push(
             <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
-                <FlatList numColumns={3} style={{ ...this.styles.footerContainer, alignContent: 'stretch', backgroundColor: 'white' }} data={this.state.pages} renderItem={({ item, index, separators }) => this._makePageSwitchBox(item, index, separators)} />
+                <FlatList numColumns={3} style={{ ...this.styles.footerContainer }} data={this.state.pages} renderItem={({ item, index, separators }) => this._makePageSwitchBox(item, index, separators)} />
             </View>
         );
         return page;

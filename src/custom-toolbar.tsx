@@ -2,6 +2,7 @@ import React from "react";
 import { Text, StyleSheet } from "react-native";
 import { Header, Icon } from 'react-native-elements';
 import { MenuComponent } from "./menu-component";
+import { InfoComponent } from "./info-component";
 
 
 export class CustomToolbar extends React.Component {
@@ -20,9 +21,9 @@ export class CustomToolbar extends React.Component {
             <Header 
             placement='left'
             backgroundColor={this.styles.toolbar.backgroundColor}
-                leftComponent={<MenuComponent />}
+                // leftComponent={<MenuComponent />}
                 centerComponent={{ text:'Varsha Arts', style:{ color:'#fff' } }}
-                rightComponent={<Icon name='rowing' type='material' color='white' />}
+                rightComponent={<InfoComponent />}
             />
         );
     }
