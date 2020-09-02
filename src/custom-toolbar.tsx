@@ -1,30 +1,32 @@
 import React from "react";
-import { Text, StyleSheet } from "react-native";
-import { Header, Icon } from 'react-native-elements';
-import { MenuComponent } from "./menu-component";
-import { InfoComponent } from "./info-component";
+import { StyleSheet, TouchableNativeFeedbackBase } from "react-native";
+import { Appbar } from 'react-native-paper';
+import { EventEmmitter, EventNames } from "./utils";
 
 
-export class CustomToolbar extends React.Component {
+export class CustomToolbar extends React.Component<any> {
+    constructor(props: any) {
+        super(props);
+    }
     styles = StyleSheet.create({
         toolbar: {
-            backgroundColor: '#0F26BA'
+            backgroundColor: '#0F26BA',
+            marginTop: 32
         }
     });
 
-    onMenuPress(event: any) {
+    onMenuPress() {
         console.log('MENU Clicked');
+        EventEmmitter.dispatch(EventNames.openNavigationDrawer, {});
     }
 
     render() {
         return (
-            <Header 
-            placement='left'
-            backgroundColor={this.styles.toolbar.backgroundColor}
-                // leftComponent={<MenuComponent />}
-                centerComponent={{ text:'Varsha Arts', style:{ color:'#fff' } }}
-                rightComponent={<InfoComponent />}
-            />
+            <Appbar.Header style={this.styles.toolbar} accessibilityStates="expanded">
+                <Appbar.Action icon="menu" onPress={() => this.onMenuPress()} accessibilityStates="expanded"/>
+                <Appbar.Content title="Varsha Arts" accessibilityStates="expanded" subtitle={this.props.subtitle} />
+                <Appbar.Action icon="dots-vertical" accessibilityStates="expanded" />
+            </Appbar.Header>
         );
     }
 }
